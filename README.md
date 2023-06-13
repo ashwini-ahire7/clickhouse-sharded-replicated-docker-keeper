@@ -2,6 +2,15 @@
 docker-compose for creating sharded ClickHouse cluster with ClickHouse keeper for supporting distrubuted tables and replication
 
 
+Note : 
+If you want to run specific version of clickhouse then just update image for specific version in docker-compose.yaml file. 
+
+Example : image: clickhouse/clickhouse-server:23.5.2.7-alpine. 
+Update for all ClickHouse Nodes in Cluster. 
+
+Visit docker hub to get correct image tag : https://hub.docker.com/r/clickhouse/clickhouse-server/tags
+
+
 ```
 root@ip-10-0-6-24:~/release_check# git clone https://github.com/ashwini-ahire7/clickhouse-sharded-replicated-docker-keeper.git
 Cloning into 'clickhouse-sharded-replicated-docker-keeper'...
