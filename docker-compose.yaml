@@ -1,0 +1,98 @@
+version: "3.9"
+services:
+  clickhouse01:
+    image: clickhouse/clickhouse-server:23.5.2.7-alpine
+    hostname: clickhouse01
+    container_name: clickhouse01
+    ports:
+      - 9001:9000
+      - 8124:8123
+      - 2182:2181
+      - 9445:9444
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.2
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+    extra_hosts:
+      - "clickhouse02:172.20.0.3"
+      - "clickhouse03:172.20.0.4"
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.xml
+      - ./clusters.xml:/etc/clickhouse-server/config.d/clusters.xml
+      - ./listen_host.xml:/etc/clickhouse-server/config.d/listen_host.xml
+      - ./zookeeper.xml:/etc/clickhouse-server/config.d/zookeeper.xml
+      - ./macros_1.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./keeper_1.xml:/etc/clickhouse-server/config.d/keeper.xml
+  clickhouse02:
+    image: clickhouse/clickhouse-server:23.5.2.7-alpine
+    hostname: clickhouse02
+    container_name: clickhouse02
+    ports:
+      - 9002:9000
+      - 8125:8123
+      - 2183:2181
+      - 9446:9444
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.3
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+    extra_hosts:
+      - "clickhouse01:172.20.0.2"
+      - "clickhouse03:172.20.0.4"
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.xml
+      - ./clusters.xml:/etc/clickhouse-server/config.d/clusters.xml
+      - ./listen_host.xml:/etc/clickhouse-server/config.d/listen_host.xml
+      - ./zookeeper.xml:/etc/clickhouse-server/config.d/zookeeper.xml
+      - ./macros_2.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./keeper_2.xml:/etc/clickhouse-server/config.d/keeper.xml
+  clickhouse03:
+    image: clickhouse/clickhouse-server:23.5.2.7-alpine
+    hostname: clickhouse03
+    container_name: clickhouse03
+    ports:
+      - 9003:9000
+      - 8126:8123
+      - 2184:2181
+      - 9447:9444
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      my-network:
+        ipv4_address: 172.20.0.4
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+    extra_hosts:
+      - "clickhouse01:172.20.0.2"
+      - "clickhouse02:172.20.0.3"
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.xml
+      - ./clusters.xml:/etc/clickhouse-server/config.d/clusters.xml
+      - ./listen_host.xml:/etc/clickhouse-server/config.d/listen_host.xml
+      - ./zookeeper.xml:/etc/clickhouse-server/config.d/zookeeper.xml
+      - ./keeper_3.xml:/etc/clickhouse-server/config.d/keeper.xml
+
+networks:
+  my-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
